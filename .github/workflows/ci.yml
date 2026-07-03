@@ -41,6 +41,10 @@ jobs:
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    # Registers a GitHub Deployment so deploys show on the repo page.
+    environment:
+      name: production
+      url: https://ingatumroh-website.padelix-indonesia.workers.dev
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
