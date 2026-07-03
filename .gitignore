@@ -1,0 +1,27 @@
+# dependencies
+node_modules/
+
+# next.js / opennext / wrangler
+.next/
+.open-next/
+.wrangler/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# env — only the example is committed
+.env*
+!.env.example
+.dev.vars*
+
+# AI assistant files — local only, never committed
+.claude/
+CLAUDE.md
+AGENTS.md
+
+# internal schema exports — not part of the website
+database-schemas/
+
+# misc
+.DS_Store
+database-schemas

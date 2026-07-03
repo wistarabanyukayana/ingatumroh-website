@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Brand palette sampled from the Ingatumrah.id logo (approximate — refine
+   against final vector assets). */
+@theme {
+  --color-brand-blue: #1b50b0;
+  --color-brand-gold: #f5a623;
+  --color-brand-gold-light: #e8c14a;
+  --color-brand-emerald: #1e9e5a;
+  --color-brand-lime: #8bc53f;
+}
