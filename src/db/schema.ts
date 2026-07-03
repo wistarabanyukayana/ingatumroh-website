@@ -62,7 +62,7 @@ export const packages = pgTable(
     uniqueIndex("packages_uq_slug").on(table.slug),
     uniqueIndex("packages_uq_name").on(table.name),
   ],
-);
+).enableRLS();
 
 export const departures = pgTable(
   "departures",
@@ -85,7 +85,7 @@ export const departures = pgTable(
       .onUpdate("cascade")
       .onDelete("cascade"),
   ],
-);
+).enableRLS();
 
 export const testimonials = pgTable(
   "testimonials",
@@ -109,7 +109,7 @@ export const testimonials = pgTable(
       .onUpdate("cascade")
       .onDelete("set null"),
   ],
-);
+).enableRLS();
 
 export const galleryImages = pgTable("gallery_images", {
   id: serial("id").primaryKey(),
@@ -121,7 +121,7 @@ export const galleryImages = pgTable("gallery_images", {
   sortOrder: integer("sort_order").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+}).enableRLS();
 
 // Singleton row (id = 1, enforced by check constraint). Everything the staff
 // should edit without a deploy but that isn't a content collection.
@@ -147,7 +147,7 @@ export const siteSettings = pgTable(
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => [check("site_settings_singleton", sql`${table.id} = 1`)],
-);
+).enableRLS();
 
 export const leads = pgTable(
   "leads",
@@ -170,7 +170,7 @@ export const leads = pgTable(
       .onUpdate("cascade")
       .onDelete("set null"),
   ],
-);
+).enableRLS();
 
 // Phase 4 — schema designed now, no UI/routes until then.
 export const articles = pgTable(
@@ -189,4 +189,4 @@ export const articles = pgTable(
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => [uniqueIndex("articles_uq_slug").on(table.slug)],
-);
+).enableRLS();
