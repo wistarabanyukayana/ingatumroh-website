@@ -25,10 +25,12 @@ const tanggal = (d: Date) =>
 
 // ponytail: FAQ is build-time copy — no faqs table yet. Move to the DB
 // (new table + admin CRUD) the day staff need to edit it without a deploy.
-const faqs = [
+// The legality answer names the operating entity so customers aren't
+// surprised when documents/visas carry that name instead of the brand.
+const buildFaqs = (legalEntity: string) => [
   {
     q: "Apakah travel ini resmi dan berizin?",
-    a: "Ya. Kami beroperasi di bawah badan hukum resmi dengan izin PPIU (umroh) dan PIHK (haji khusus) dari Kementerian Agama RI. Nomor izin kami tercantum di halaman ini dan dapat diverifikasi melalui kanal resmi Kemenag.",
+    a: `Ya. ${site.name} adalah layanan umroh yang diselenggarakan oleh ${legalEntity}, pemegang izin PPIU (umroh) dan PIHK (haji khusus) dari Kementerian Agama RI. Nama tersebut yang akan Anda temui pada dokumen resmi keberangkatan — layanan dan pendampingan Anda tetap bersama ${site.name}. Nomor izin tercantum di halaman ini dan dapat diverifikasi melalui kanal resmi Kemenag.`,
   },
   {
     q: "Bagaimana cara mendaftar?",
@@ -47,6 +49,8 @@ const faqs = [
     a: "Ada. Setiap jamaah mengikuti manasik umroh bersama pembimbing berpengalaman sebelum keberangkatan, dan selama di Tanah Suci didampingi muthawwif berbahasa Indonesia.",
   },
 ];
+
+type FaqItem = ReturnType<typeof buildFaqs>[number];
 
 function WaButton({
   number,
@@ -126,6 +130,7 @@ export default async function Home() {
   }
 
   const wa = settings.whatsappNumber;
+  const faqs = buildFaqs(settings.legalEntity);
   const nextDepartureByPkg = new Map<number, Departure>();
   for (const d of departures) {
     if (!nextDepartureByPkg.has(d.packageId)) {
@@ -144,11 +149,11 @@ export default async function Home() {
         <WhyUs />
         <Testimonials testimonials={testimonials} />
         <Gallery gallery={gallery} />
-        <Faq />
+        <Faq faqs={faqs} />
         <ClosingCta wa={wa} />
       </main>
       <Footer settings={settings} />
-      <JsonLd settings={settings} packages={packages} />
+      <JsonLd settings={settings} packages={packages} faqs={faqs} />
     </>
   );
 }
@@ -240,7 +245,9 @@ function TrustBar({ settings }: { settings: Settings }) {
             {settings.pihkLicenseNo}
           </span>
         )}
-        <span>{settings.legalEntity}</span>
+        <span className="text-xs text-ink/45">
+          Izin atas nama {settings.legalEntity}
+        </span>
         {settings.partnerLogos.map((p) => (
           <span key={p.name} className="font-medium">
             {p.name}
@@ -519,7 +526,7 @@ function Gallery({ gallery }: { gallery: LandingData["gallery"] }) {
   );
 }
 
-function Faq() {
+function Faq({ faqs }: { faqs: FaqItem[] }) {
   return (
     <section id="faq" className="bg-surface py-16 sm:py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
@@ -577,11 +584,12 @@ function Footer({ settings }: { settings: Settings }) {
       <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:grid-cols-3 sm:px-6">
         <div>
           <p className="text-lg font-extrabold text-white">{site.name}</p>
-          <p className="mt-2 text-sm">{settings.legalEntity}</p>
-          <p className="mt-1 text-sm">{settings.ppiuLicenseNo}</p>
-          {settings.pihkLicenseNo && (
-            <p className="mt-1 text-sm">{settings.pihkLicenseNo}</p>
-          )}
+          <p className="mt-2 text-sm">
+            Diselenggarakan oleh {settings.legalEntity}, pemegang{" "}
+            {settings.ppiuLicenseNo}
+            {settings.pihkLicenseNo && ` dan ${settings.pihkLicenseNo}`} dari
+            Kementerian Agama RI.
+          </p>
         </div>
         <div className="text-sm">
           <p className="font-bold text-white">Kontak</p>
@@ -608,8 +616,7 @@ function Footer({ settings }: { settings: Settings }) {
         </div>
       </div>
       <p className="mt-10 text-center text-xs text-white/50">
-        © {new Date().getFullYear()} {settings.legalEntity}. Hak cipta
-        dilindungi.
+        © {new Date().getFullYear()} {site.name}. Hak cipta dilindungi.
       </p>
     </footer>
   );
@@ -618,9 +625,11 @@ function Footer({ settings }: { settings: Settings }) {
 function JsonLd({
   settings,
   packages,
+  faqs,
 }: {
   settings: Settings;
   packages: Pkg[];
+  faqs: FaqItem[];
 }) {
   const data = [
     {

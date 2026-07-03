@@ -32,10 +32,10 @@ await db
   .insert(siteSettings)
   .values({
     id: 1,
-    whatsappNumber: "6281234567890", // [GANTI] real WhatsApp number
+    whatsappNumber: "6282122122250",
     ppiuLicenseNo: "SK PPIU 64/2020",
     pihkLicenseNo: "SK PIHK 690/2020",
-    legalEntity: "PT. Delta Laras Wisata",
+    legalEntity: "PT. Delta Laras Wisata (Dallas Tour & Travel)",
     heroHeadline: "Ingat Allah, Ingat Umroh.",
     heroSubhead:
       "Berangkat ke Tanah Suci dengan tenang bersama travel berizin resmi Kemenag. Pembimbing berpengalaman, harga transparan, jadwal pasti.",
