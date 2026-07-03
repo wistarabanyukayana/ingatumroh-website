@@ -10,6 +10,8 @@ export const site = {
   description:
     "Perjalanan umroh yang tenang, amanah, dan berizin resmi. Konsultasi gratis via WhatsApp.",
   locale: "id-ID",
+  // Canonical URL for metadata/OG — switch when the custom domain lands.
+  url: "https://ingatumroh-website.padelix-indonesia.workers.dev",
 } as const;
 
 // Every CTA routes through this — WhatsApp-first lead capture.

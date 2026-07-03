@@ -4,8 +4,33 @@
    against final vector assets). */
 @theme {
   --color-brand-blue: #1b50b0;
+  --color-brand-blue-deep: #143c85;
   --color-brand-gold: #f5a623;
   --color-brand-gold-light: #e8c14a;
   --color-brand-emerald: #1e9e5a;
   --color-brand-lime: #8bc53f;
+  --color-ink: #0f2244;
+  --color-surface: #f6f8fc;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Native-accordion chevron (FAQ uses <details>, no JS). */
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details[open] .faq-chevron {
+  rotate: 180deg;
 }
