@@ -8,6 +8,14 @@ versioning: [SemVer](https://semver.org/).
 
 ### Added
 
+- Admin CMS (Phase 2) at /admin: Supabase Auth login with middleware
+  guard, dashboard, and full CRUD for packages, departures,
+  testimonials, gallery, and site settings. Every mutation is a server
+  action that verifies the session, validates with the shared Zod
+  schemas, and revalidates the public page on save.
+- Image uploads: browser-side resize/compress (canvas → WebP, per-slot
+  max widths) to a public Supabase Storage bucket.
+
 - PIHK (haji khusus) license alongside PPIU: new `pihk_license_no`
   column in site settings, shown in the trust bar and footer.
 

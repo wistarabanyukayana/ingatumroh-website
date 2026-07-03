@@ -23,6 +23,10 @@
       "bucket_name": "ingatumroh-inc-cache"
     }
   ],
+  "vars": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://cfndpurlfhzepyejcnkl.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_ALU-C8EH_gEqVad7NxBJCQ_q1RiZwhb"
+  },
   "observability": {
     "enabled": true
   }
