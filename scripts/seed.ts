@@ -33,7 +33,8 @@ await db
   .values({
     id: 1,
     whatsappNumber: "6281234567890", // [GANTI] real WhatsApp number
-    ppiuLicenseNo: "U.000 Tahun 2025", // [GANTI] real PPIU license number
+    ppiuLicenseNo: "SK PPIU 64/2020",
+    pihkLicenseNo: "SK PIHK 690/2020",
     legalEntity: "PT. Delta Laras Wisata",
     heroHeadline: "Ingat Allah, Ingat Umroh.",
     heroSubhead:

@@ -6,6 +6,16 @@ versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- PIHK (haji khusus) license alongside PPIU: new `pihk_license_no`
+  column in site settings, shown in the trust bar and footer.
+
+### Changed
+
+- Real license numbers (SK PPIU 64/2020, SK PIHK 690/2020) replace the
+  seed placeholders.
+
 ## [0.1.0] - 2026-07-03
 
 ### Added

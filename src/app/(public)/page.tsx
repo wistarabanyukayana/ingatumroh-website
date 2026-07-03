@@ -28,7 +28,7 @@ const tanggal = (d: Date) =>
 const faqs = [
   {
     q: "Apakah travel ini resmi dan berizin?",
-    a: "Ya. Kami beroperasi di bawah badan hukum resmi dengan izin PPIU dari Kementerian Agama RI. Nomor izin kami tercantum di halaman ini dan dapat diverifikasi melalui kanal resmi Kemenag.",
+    a: "Ya. Kami beroperasi di bawah badan hukum resmi dengan izin PPIU (umroh) dan PIHK (haji khusus) dari Kementerian Agama RI. Nomor izin kami tercantum di halaman ini dan dapat diverifikasi melalui kanal resmi Kemenag.",
   },
   {
     q: "Bagaimana cara mendaftar?",
@@ -232,9 +232,14 @@ function TrustBar({ settings }: { settings: Settings }) {
     <section className="border-b border-ink/5 bg-white">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-4 py-5 text-sm text-ink/70 sm:px-6">
         <span className="font-semibold text-ink">
-          <span className="text-brand-gold">✓</span> Izin PPIU:{" "}
-          {settings.ppiuLicenseNo}
+          <span className="text-brand-gold">✓</span> {settings.ppiuLicenseNo}
         </span>
+        {settings.pihkLicenseNo && (
+          <span className="font-semibold text-ink">
+            <span className="text-brand-gold">✓</span>{" "}
+            {settings.pihkLicenseNo}
+          </span>
+        )}
         <span>{settings.legalEntity}</span>
         {settings.partnerLogos.map((p) => (
           <span key={p.name} className="font-medium">
@@ -427,7 +432,7 @@ function WhyUs() {
   const items = [
     {
       title: "Berizin resmi",
-      body: "Terdaftar sebagai PPIU di Kementerian Agama RI — legalitas dapat diverifikasi, bukan sekadar klaim.",
+      body: "Terdaftar di Kementerian Agama RI sebagai PPIU (umroh) dan PIHK (haji khusus) — legalitas dapat diverifikasi, bukan sekadar klaim.",
     },
     {
       title: "Pembimbing berpengalaman",
@@ -573,7 +578,10 @@ function Footer({ settings }: { settings: Settings }) {
         <div>
           <p className="text-lg font-extrabold text-white">{site.name}</p>
           <p className="mt-2 text-sm">{settings.legalEntity}</p>
-          <p className="mt-1 text-sm">Izin PPIU: {settings.ppiuLicenseNo}</p>
+          <p className="mt-1 text-sm">{settings.ppiuLicenseNo}</p>
+          {settings.pihkLicenseNo && (
+            <p className="mt-1 text-sm">{settings.pihkLicenseNo}</p>
+          )}
         </div>
         <div className="text-sm">
           <p className="font-bold text-white">Kontak</p>

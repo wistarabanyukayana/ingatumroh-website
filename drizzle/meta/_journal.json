@@ -15,6 +15,13 @@
       "when": 1783048624325,
       "tag": "0001_supreme_bloodstorm",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1783071190562,
+      "tag": "0002_melted_randall_flagg",
+      "breakpoints": true
     }
   ]
 }

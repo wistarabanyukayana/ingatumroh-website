@@ -133,6 +133,8 @@ export const siteSettings = pgTable(
     // interpolated into wa.me links.
     whatsappNumber: varchar("whatsapp_number", { length: 20 }).notNull(),
     ppiuLicenseNo: varchar("ppiu_license_no", { length: 100 }).notNull(),
+    // PIHK (haji khusus) license — optional; not every PPIU holds one.
+    pihkLicenseNo: varchar("pihk_license_no", { length: 100 }),
     legalEntity: varchar("legal_entity", { length: 150 }).notNull(),
     heroHeadline: varchar("hero_headline", { length: 200 }).notNull(),
     heroSubhead: varchar("hero_subhead", { length: 300 }),

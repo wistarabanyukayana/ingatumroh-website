@@ -1,0 +1,1 @@
+ALTER TABLE "site_settings" ADD COLUMN "pihk_license_no" varchar(100);
