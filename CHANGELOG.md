@@ -6,6 +6,18 @@ versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-07-04
+
+### Fixed
+
+- Admin settings edits (e.g. office address) weren't reaching the public
+  page after save. `revalidatePath()` had nothing durable to record
+  invalidation in — `open-next.config.ts` only configured the R2
+  incremental cache, so the tag cache silently defaulted to a no-op and
+  the ISR cache was served stale indefinitely. Added a KV-backed tag
+  cache (`NEXT_TAG_CACHE_KV`) so on-demand revalidation actually takes
+  effect.
+
 ## [0.2.1] - 2026-07-04
 
 ### Fixed

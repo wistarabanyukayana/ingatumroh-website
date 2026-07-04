@@ -23,6 +23,15 @@
       "bucket_name": "ingatumroh-inc-cache"
     }
   ],
+  // Durable tag cache so revalidatePath()/revalidateTag() from admin server
+  // actions actually invalidate the R2 ISR cache above. Without this, the
+  // default (no-op) tag cache silently no-ops and pages never refresh.
+  "kv_namespaces": [
+    {
+      "binding": "NEXT_TAG_CACHE_KV",
+      "id": "7fcb16aba971481fbe80171e8d9b8385"
+    }
+  ],
   "vars": {
     "NEXT_PUBLIC_SUPABASE_URL": "https://cfndpurlfhzepyejcnkl.supabase.co",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_ALU-C8EH_gEqVad7NxBJCQ_q1RiZwhb"
