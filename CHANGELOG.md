@@ -6,6 +6,21 @@ versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-07-04
+
+### Fixed
+
+- Removed `src/proxy.ts` (Next.js middleware): OpenNext's Cloudflare
+  adapter doesn't support it, which broke `pnpm deploy`. The `/admin`
+  auth guard now lives in the dashboard layout (redirects to
+  `/admin/login`) and the login page (redirects to `/admin` if already
+  signed in). Session cookie refresh, which middleware used to do on
+  every request, now runs via a Server Action pinged on navigation
+  (`AdminSessionRefresh`), since Server Components can't write cookies.
+- CI's build step now runs the OpenNext Cloudflare build instead of
+  plain `next build`, so Workers incompatibilities fail CI instead of
+  only surfacing at deploy time.
+
 ## [0.2.0] - 2026-07-04
 
 ### Added

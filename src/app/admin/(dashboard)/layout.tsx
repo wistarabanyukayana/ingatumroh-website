@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { logout } from "@/actions/auth";
 import { AdminNavLink } from "@/components/admin/AdminNavLink";
 import { KaabaMark } from "@/components/KaabaMark";
 import { site } from "@/config/site";
+import { createClient } from "@/lib/supabase/server";
+
+import { AdminSessionRefresh } from "./AdminSessionRefresh";
 
 export const metadata: Metadata = {
   title: { default: "Admin", template: `%s | Admin ${site.name}` },
@@ -21,9 +25,22 @@ const nav = [
   ["Pengaturan", "/admin/settings"],
 ] as const;
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+// Route protection used to live in proxy.ts (middleware), which OpenNext's
+// Cloudflare adapter doesn't support. Guarding it here instead.
+export default async function AdminLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/admin/login");
+
   return (
     <div className="min-h-screen bg-surface">
+      <AdminSessionRefresh />
       <header className="sticky top-0 z-30 border-b border-ink/10 bg-white/90 backdrop-blur">
         <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:flex-nowrap sm:px-6 lg:px-8">
           <Link href="/admin" className="flex items-center gap-2">

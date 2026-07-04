@@ -19,8 +19,8 @@ export async function createClient() {
               cookieStore.set(name, value, options),
             );
           } catch {
-            // Called from a Server Component — session refresh is handled
-            // by the middleware instead.
+            // Called from a Server Component — cookies() is read-only here.
+            // Session refresh happens via AdminSessionRefresh's Server Action.
           }
         },
       },

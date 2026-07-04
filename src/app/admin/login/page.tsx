@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { KaabaMark } from "@/components/KaabaMark";
 import { site } from "@/config/site";
+import { createClient } from "@/lib/supabase/server";
 
 import { LoginForm } from "./LoginForm";
 
 export const metadata: Metadata = { title: "Masuk Admin" };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) redirect("/admin");
+
   return (
     <main className="grid min-h-screen place-items-center bg-surface px-4">
       <div className="w-full max-w-sm">

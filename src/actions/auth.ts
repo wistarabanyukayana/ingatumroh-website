@@ -34,3 +34,10 @@ export async function logout() {
   await supabase.auth.signOut();
   redirect("/admin/login");
 }
+
+// Server Actions can write cookies (Server Components can't) — this is how
+// the Supabase session cookie gets refreshed now that there's no middleware.
+export async function refreshAdminSession() {
+  const supabase = await createClient();
+  await supabase.auth.getUser();
+}

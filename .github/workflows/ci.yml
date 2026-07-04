@@ -36,8 +36,10 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      # Uses the OpenNext Cloudflare build, not `next build`, so Workers
+      # incompatibilities (e.g. unsupported middleware) fail CI, not deploy.
       - name: Build
-        run: pnpm build
+        run: pnpm exec opennextjs-cloudflare build
 
   deploy:
     needs: build
