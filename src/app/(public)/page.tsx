@@ -1,4 +1,9 @@
+import Link from "next/link";
+
 import { KaabaMark } from "@/components/KaabaMark";
+import { Reveal } from "@/components/Reveal";
+import { SiteHeader } from "@/components/SiteHeader";
+import { WaButton, WaFab } from "@/components/Wa";
 import { site, waLink } from "@/config/site";
 import { getLandingData, type LandingData } from "@/lib/queries";
 
@@ -53,38 +58,6 @@ const buildFaqs = (legalEntity: string) => [
 
 type FaqItem = ReturnType<typeof buildFaqs>[number];
 
-function WaButton({
-  number,
-  message,
-  children,
-  className = "",
-}: {
-  number: string;
-  message: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <a
-      href={waLink(number, message)}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`inline-flex items-center justify-center gap-2 rounded-full bg-brand-emerald px-6 py-3 font-semibold text-white transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-emerald ${className}`}
-    >
-      <WaIcon />
-      {children}
-    </a>
-  );
-}
-
-function WaIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="size-5" aria-hidden>
-      <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.4-3c-.3-.4 0-.5.2-.8l.4-.5c.1-.2 0-.4 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9.6.3 1.1.4 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2 0-.1-.2-.2-.4-.3Z" />
-    </svg>
-  );
-}
-
 const Stars = ({ n }: { n: number | null }) =>
   n ? (
     <span className="text-brand-gold" aria-label={`hotel bintang ${n}`}>
@@ -99,6 +72,37 @@ const statusLabel: Record<Departure["status"], string> = {
   departed: "Berangkat",
   cancelled: "Dibatalkan",
 };
+
+// Shared section header: gold kicker eyebrow → headline → lead.
+function SectionHeading({
+  kicker,
+  title,
+  lead,
+  dark = false,
+}: {
+  kicker: string;
+  title: string;
+  lead?: string;
+  dark?: boolean;
+}) {
+  return (
+    <Reveal>
+      <p className="kicker">{kicker}</p>
+      <h2
+        className={`mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl ${
+          dark ? "text-white" : "text-ink"
+        }`}
+      >
+        {title}
+      </h2>
+      {lead && (
+        <p className={`mt-3 max-w-xl ${dark ? "text-white/80" : "text-ink/60"}`}>
+          {lead}
+        </p>
+      )}
+    </Reveal>
+  );
+}
 
 export default async function Home() {
   const { settings, packages, departures, testimonials, gallery } =
@@ -127,11 +131,15 @@ export default async function Home() {
 
   return (
     <>
-      <Header wa={wa} />
+      <SiteHeader wa={wa} />
       <main id="beranda">
         <Hero settings={settings} />
         <TrustBar settings={settings} />
-        <Packages packages={packages} nextDeparture={nextDepartureByPkg} wa={wa} />
+        <Packages
+          packages={packages}
+          nextDeparture={nextDepartureByPkg}
+          wa={wa}
+        />
         <Departures departures={departures} packages={packages} wa={wa} />
         <WhyUs />
         <Testimonials testimonials={testimonials} />
@@ -140,80 +148,52 @@ export default async function Home() {
         <ClosingCta wa={wa} />
       </main>
       <Footer settings={settings} />
+      <WaFab number={wa} />
       <JsonLd settings={settings} packages={packages} faqs={faqs} />
     </>
   );
 }
 
-function Header({ wa }: { wa: string }) {
-  const nav = [
-    ["Paket", "#paket"],
-    ["Jadwal", "#jadwal"],
-    ["Testimoni", "#testimoni"],
-    ["FAQ", "#faq"],
-  ] as const;
-  return (
-    <header className="sticky top-0 z-40 border-b border-ink/5 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <a href="#beranda" className="flex items-center gap-2">
-          <span className="size-8">
-            <KaabaMark />
-          </span>
-          <span className="text-lg font-extrabold tracking-tight text-brand-blue">
-            {site.name}
-          </span>
-        </a>
-        <nav className="hidden gap-6 text-sm font-medium text-ink/70 md:flex">
-          {nav.map(([label, href]) => (
-            <a key={href} href={href} className="hover:text-brand-blue">
-              {label}
-            </a>
-          ))}
-        </nav>
-        <WaButton
-          number={wa}
-          message="Assalamu'alaikum, saya ingin konsultasi paket umroh."
-          className="!px-4 !py-2 text-sm"
-        >
-          Konsultasi
-        </WaButton>
-      </div>
-    </header>
-  );
-}
-
 function Hero({ settings }: { settings: Settings }) {
   return (
-    <section className="relative overflow-hidden bg-brand-blue text-white">
+    <section className="relative overflow-hidden bg-linear-to-br from-brand-blue to-brand-blue-deep text-white">
       <div className="pointer-events-none absolute -right-16 top-1/2 hidden size-105 -translate-y-1/2 opacity-15 lg:block">
         <KaabaMark />
       </div>
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
-        <p className="mb-4 inline-block rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium text-brand-gold-light">
-          Travel umroh berizin resmi Kemenag RI
-        </p>
-        <h1 className="max-w-2xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">
-          {settings.heroHeadline}
-        </h1>
-        {settings.heroSubhead && (
-          <p className="mt-5 max-w-xl text-lg text-white/85">
-            {settings.heroSubhead}
+        <Reveal>
+          <p className="mb-5 inline-block rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-sm font-medium text-brand-gold-light">
+            Travel umroh berizin resmi Kemenag RI
           </p>
+        </Reveal>
+        <Reveal delay={100}>
+          <h1 className="max-w-2xl text-balance text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+            {settings.heroHeadline}
+          </h1>
+        </Reveal>
+        {settings.heroSubhead && (
+          <Reveal delay={200}>
+            <p className="mt-6 max-w-xl text-lg text-white/85">
+              {settings.heroSubhead}
+            </p>
+          </Reveal>
         )}
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          <WaButton
-            number={settings.whatsappNumber}
-            message="Assalamu'alaikum, saya ingin konsultasi paket umroh."
-          >
-            Konsultasi Gratis via WhatsApp
-          </WaButton>
-          <a
-            href="#paket"
-            className="rounded-full border border-white/40 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
-          >
-            Lihat Paket
-          </a>
-        </div>
+        <Reveal delay={300}>
+          <div className="mt-10 flex flex-wrap items-center gap-4">
+            <WaButton
+              number={settings.whatsappNumber}
+              message="Assalamu'alaikum, saya ingin konsultasi paket umroh."
+            >
+              Konsultasi Gratis via WhatsApp
+            </WaButton>
+            <a
+              href="#paket"
+              className="rounded-full border border-white/40 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
+            >
+              Lihat Paket
+            </a>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -256,90 +236,89 @@ function Packages({
 }) {
   if (!packages.length) return null;
   return (
-    <section id="paket" className="bg-surface py-16 sm:py-20">
+    <section id="paket" className="scroll-mt-16 bg-surface py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="text-3xl font-extrabold tracking-tight text-ink">
-          Paket Umroh
-        </h2>
-        <p className="mt-2 max-w-xl text-ink/60">
-          Harga transparan, fasilitas jelas. Semua paket sudah termasuk
-          pembimbing dan muthawwif berbahasa Indonesia.
-        </p>
+        <SectionHeading
+          kicker="Paket"
+          title="Paket Umroh"
+          lead="Harga transparan, fasilitas jelas. Semua paket sudah termasuk pembimbing dan muthawwif berbahasa Indonesia."
+        />
         <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {packages.map((p) => {
+          {packages.map((p, i) => {
             const next = nextDeparture.get(p.id);
             return (
-              <article
-                key={p.id}
-                className={`flex flex-col rounded-2xl border bg-white p-6 ${
-                  p.isFeatured
-                    ? "border-brand-gold shadow-lg shadow-brand-gold/10"
-                    : "border-ink/10"
-                }`}
-              >
-                {p.isFeatured && (
-                  <span className="mb-3 self-start rounded-full bg-brand-gold/15 px-3 py-1 text-xs font-bold text-brand-gold">
-                    Favorit Jamaah
-                  </span>
-                )}
-                <h3 className="text-xl font-extrabold text-ink">{p.name}</h3>
-                <p className="mt-1 text-sm text-ink/60">
-                  {p.durationDays} hari{p.airline ? ` · ${p.airline}` : ""}
-                </p>
-                <p className="mt-4 text-2xl font-extrabold tabular-nums text-brand-blue">
-                  {idr(p.priceFrom, p.currency)}
-                  <span className="text-sm font-medium text-ink/50">
-                    {" "}
-                    / jamaah
-                  </span>
-                </p>
-                <dl className="mt-4 space-y-1.5 text-sm text-ink/75">
-                  {p.hotelMakkah && (
-                    <div className="flex justify-between gap-2">
-                      <dt>Makkah: {p.hotelMakkah}</dt>
-                      <dd>
-                        <Stars n={p.hotelMakkahStars} />
-                      </dd>
-                    </div>
-                  )}
-                  {p.hotelMadinah && (
-                    <div className="flex justify-between gap-2">
-                      <dt>Madinah: {p.hotelMadinah}</dt>
-                      <dd>
-                        <Stars n={p.hotelMadinahStars} />
-                      </dd>
-                    </div>
-                  )}
-                  {next && (
-                    <div className="flex justify-between gap-2">
-                      <dt>Keberangkatan terdekat</dt>
-                      <dd className="font-semibold text-ink">
-                        {tanggal(next.departDate)}
-                      </dd>
-                    </div>
-                  )}
-                </dl>
-                {p.inclusions.length > 0 && (
-                  <ul className="mt-4 flex flex-wrap gap-1.5">
-                    {p.inclusions.slice(0, 6).map((inc) => (
-                      <li
-                        key={inc}
-                        className="rounded-full bg-surface px-2.5 py-1 text-xs text-ink/70"
-                      >
-                        {inc}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <div className="mt-6 flex-1" />
-                <WaButton
-                  number={wa}
-                  message={`Assalamu'alaikum, saya tertarik dengan paket ${p.name}. Mohon info selengkapnya.`}
-                  className="w-full text-sm"
+              <Reveal key={p.id} delay={(i % 3) * 100} className="h-full">
+                <article
+                  className={`flex h-full flex-col rounded-2xl border bg-white p-6 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-ink/10 ${
+                    p.isFeatured
+                      ? "border-brand-gold shadow-lg shadow-brand-gold/10"
+                      : "border-ink/10"
+                  }`}
                 >
-                  Tanya Paket Ini
-                </WaButton>
-              </article>
+                  {p.isFeatured && (
+                    <span className="mb-3 self-start rounded-full bg-brand-gold/15 px-3 py-1 text-xs font-bold text-brand-gold">
+                      Favorit Jamaah
+                    </span>
+                  )}
+                  <h3 className="text-xl font-extrabold text-ink">{p.name}</h3>
+                  <p className="mt-1 text-sm text-ink/60">
+                    {p.durationDays} hari{p.airline ? ` · ${p.airline}` : ""}
+                  </p>
+                  <p className="mt-4 text-2xl font-extrabold tabular-nums text-brand-blue">
+                    {idr(p.priceFrom, p.currency)}
+                    <span className="text-sm font-medium text-ink/50">
+                      {" "}
+                      / jamaah
+                    </span>
+                  </p>
+                  <dl className="mt-4 space-y-1.5 text-sm text-ink/75">
+                    {p.hotelMakkah && (
+                      <div className="flex justify-between gap-2">
+                        <dt>Makkah: {p.hotelMakkah}</dt>
+                        <dd>
+                          <Stars n={p.hotelMakkahStars} />
+                        </dd>
+                      </div>
+                    )}
+                    {p.hotelMadinah && (
+                      <div className="flex justify-between gap-2">
+                        <dt>Madinah: {p.hotelMadinah}</dt>
+                        <dd>
+                          <Stars n={p.hotelMadinahStars} />
+                        </dd>
+                      </div>
+                    )}
+                    {next && (
+                      <div className="flex justify-between gap-2">
+                        <dt>Keberangkatan terdekat</dt>
+                        <dd className="font-semibold text-ink">
+                          {tanggal(next.departDate)}
+                        </dd>
+                      </div>
+                    )}
+                  </dl>
+                  {p.inclusions.length > 0 && (
+                    <ul className="mt-4 flex flex-wrap gap-1.5">
+                      {p.inclusions.slice(0, 6).map((inc) => (
+                        <li
+                          key={inc}
+                          className="rounded-full bg-surface px-2.5 py-1 text-xs text-ink/70"
+                        >
+                          {inc}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <div className="mt-6 flex-1" />
+                  <WaButton
+                    number={wa}
+                    message={`Assalamu'alaikum, saya tertarik dengan paket ${p.name}. Mohon info selengkapnya.`}
+                    className="w-full text-sm"
+                  >
+                    Tanya Paket Ini
+                  </WaButton>
+                </article>
+              </Reveal>
             );
           })}
         </div>
@@ -360,63 +339,70 @@ function Departures({
   if (!departures.length) return null;
   const pkgName = new Map(packages.map((p) => [p.id, p.name]));
   return (
-    <section id="jadwal" className="bg-white py-16 sm:py-20">
+    <section id="jadwal" className="scroll-mt-16 bg-white py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="text-3xl font-extrabold tracking-tight text-ink">
-          Jadwal Keberangkatan
-        </h2>
-        <div className="mt-8 overflow-x-auto">
-          <table className="w-full min-w-140 text-left text-sm">
-            <thead>
-              <tr className="border-b border-ink/10 text-ink/50">
-                <th className="py-3 pr-4 font-semibold">Tanggal</th>
-                <th className="py-3 pr-4 font-semibold">Paket</th>
-                <th className="py-3 pr-4 font-semibold">Kuota</th>
-                <th className="py-3 pr-4 font-semibold">Status</th>
-                <th className="py-3" />
-              </tr>
-            </thead>
-            <tbody>
-              {departures.map((d) => (
-                <tr key={d.id} className="border-b border-ink/5">
-                  <td className="py-3 pr-4 font-semibold tabular-nums text-ink">
-                    {tanggal(d.departDate)}
-                  </td>
-                  <td className="py-3 pr-4 text-ink/75">
-                    {pkgName.get(d.packageId)}
-                  </td>
-                  <td className="py-3 pr-4 tabular-nums text-ink/75">
-                    {d.quota} kursi
-                  </td>
-                  <td className="py-3 pr-4">
-                    <span
-                      className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-                        d.status === "almost_full"
-                          ? "bg-brand-gold/15 text-brand-gold"
-                          : "bg-brand-emerald/10 text-brand-emerald"
-                      }`}
-                    >
-                      {statusLabel[d.status]}
-                    </span>
-                  </td>
-                  <td className="py-3 text-right">
-                    <a
-                      href={waLink(
-                        wa,
-                        `Assalamu'alaikum, saya ingin tanya jadwal umroh ${tanggal(d.departDate)} (${pkgName.get(d.packageId) ?? ""}).`,
-                      )}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold text-brand-blue hover:underline"
-                    >
-                      Tanya →
-                    </a>
-                  </td>
+        <SectionHeading
+          kicker="Jadwal"
+          title="Jadwal Keberangkatan"
+          lead="Kursi setiap keberangkatan terbatas — amankan tanggal Anda lebih awal."
+        />
+        <Reveal delay={100}>
+          <div className="mt-8 overflow-x-auto">
+            <table className="w-full min-w-140 text-left text-sm">
+              <thead>
+                <tr className="border-b border-ink/10 text-ink/50">
+                  <th className="py-3 pr-4 font-semibold">Tanggal</th>
+                  <th className="py-3 pr-4 font-semibold">Paket</th>
+                  <th className="py-3 pr-4 font-semibold">Kuota</th>
+                  <th className="py-3 pr-4 font-semibold">Status</th>
+                  <th className="py-3" />
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {departures.map((d) => (
+                  <tr
+                    key={d.id}
+                    className="border-b border-ink/5 transition-colors hover:bg-surface/60"
+                  >
+                    <td className="py-3 pr-4 font-semibold tabular-nums text-ink">
+                      {tanggal(d.departDate)}
+                    </td>
+                    <td className="py-3 pr-4 text-ink/75">
+                      {pkgName.get(d.packageId)}
+                    </td>
+                    <td className="py-3 pr-4 tabular-nums text-ink/75">
+                      {d.quota} kursi
+                    </td>
+                    <td className="py-3 pr-4">
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-xs font-bold ${
+                          d.status === "almost_full"
+                            ? "bg-brand-gold/15 text-brand-gold"
+                            : "bg-brand-emerald/10 text-brand-emerald"
+                        }`}
+                      >
+                        {statusLabel[d.status]}
+                      </span>
+                    </td>
+                    <td className="py-3 text-right">
+                      <a
+                        href={waLink(
+                          wa,
+                          `Assalamu'alaikum, saya ingin tanya jadwal umroh ${tanggal(d.departDate)} (${pkgName.get(d.packageId) ?? ""}).`,
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-brand-blue hover:underline"
+                      >
+                        Tanya →
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -440,17 +426,21 @@ function WhyUs() {
   return (
     <section className="bg-brand-blue py-16 text-white sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="text-3xl font-extrabold tracking-tight">
-          Kenapa jamaah memilih kami
-        </h2>
-        <div className="mt-10 grid gap-8 sm:grid-cols-3">
-          {items.map((it) => (
-            <div key={it.title}>
-              <h3 className="text-lg font-bold text-brand-gold-light">
-                {it.title}
-              </h3>
-              <p className="mt-2 text-white/85">{it.body}</p>
-            </div>
+        <SectionHeading
+          kicker="Keunggulan"
+          title="Kenapa jamaah memilih kami"
+          dark
+        />
+        <div className="mt-10 grid gap-6 sm:grid-cols-3">
+          {items.map((it, i) => (
+            <Reveal key={it.title} delay={i * 100} className="h-full">
+              <div className="h-full rounded-2xl border border-white/10 bg-white/5 p-6">
+                <h3 className="text-lg font-bold text-brand-gold-light">
+                  {it.title}
+                </h3>
+                <p className="mt-2 text-white/85">{it.body}</p>
+              </div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -465,22 +455,25 @@ function Testimonials({
 }) {
   if (!testimonials.length) return null;
   return (
-    <section id="testimoni" className="bg-surface py-16 sm:py-20">
+    <section id="testimoni" className="scroll-mt-16 bg-surface py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="text-3xl font-extrabold tracking-tight text-ink">
-          Kata Jamaah Kami
-        </h2>
+        <SectionHeading kicker="Testimoni" title="Kata Jamaah Kami" />
         <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {testimonials.map((t) => (
-            <figure
-              key={t.id}
-              className="rounded-2xl border border-ink/10 bg-white p-6"
-            >
-              <blockquote className="text-ink/80">“{t.quote}”</blockquote>
-              <figcaption className="mt-4 font-bold text-ink">
-                {t.name}
-              </figcaption>
-            </figure>
+          {testimonials.map((t, i) => (
+            <Reveal key={t.id} delay={(i % 3) * 100} className="h-full">
+              <figure className="h-full rounded-2xl border border-ink/10 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-ink/5">
+                <span
+                  aria-hidden
+                  className="block text-5xl font-extrabold leading-none text-brand-gold/50"
+                >
+                  “
+                </span>
+                <blockquote className="mt-1 text-ink/80">{t.quote}</blockquote>
+                <figcaption className="mt-4 font-bold text-ink">
+                  {t.name}
+                </figcaption>
+              </figure>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -493,19 +486,25 @@ function Gallery({ gallery }: { gallery: LandingData["gallery"] }) {
   return (
     <section className="bg-white py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="text-3xl font-extrabold tracking-tight text-ink">
-          Galeri Perjalanan
-        </h2>
+        <SectionHeading kicker="Galeri" title="Galeri Perjalanan" />
         <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
-          {gallery.map((g) => (
-            // eslint-disable-next-line @next/next/no-img-element -- images.unoptimized; resized at upload time
-            <img
-              key={g.id}
-              src={g.imageUrl}
-              alt={g.caption ?? "Dokumentasi perjalanan umroh"}
-              loading="lazy"
-              className="aspect-square w-full rounded-xl object-cover"
-            />
+          {gallery.map((g, i) => (
+            <Reveal key={g.id} delay={(i % 4) * 80}>
+              <figure className="group relative overflow-hidden rounded-xl">
+                {/* eslint-disable-next-line @next/next/no-img-element -- images.unoptimized; resized at upload time */}
+                <img
+                  src={g.imageUrl}
+                  alt={g.caption ?? "Dokumentasi perjalanan umroh"}
+                  loading="lazy"
+                  className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                {g.caption && (
+                  <figcaption className="absolute inset-x-0 bottom-0 bg-linear-to-t from-ink/70 to-transparent px-3 pb-2 pt-8 text-xs text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    {g.caption}
+                  </figcaption>
+                )}
+              </figure>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -515,16 +514,17 @@ function Gallery({ gallery }: { gallery: LandingData["gallery"] }) {
 
 function Faq({ faqs }: { faqs: FaqItem[] }) {
   return (
-    <section id="faq" className="bg-surface py-16 sm:py-20">
+    <section id="faq" className="scroll-mt-16 bg-surface py-16 sm:py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
-        <h2 className="text-3xl font-extrabold tracking-tight text-ink">
-          Pertanyaan yang Sering Diajukan
-        </h2>
+        <SectionHeading
+          kicker="FAQ"
+          title="Pertanyaan yang Sering Diajukan"
+        />
         <div className="mt-8 space-y-3">
           {faqs.map((f) => (
             <details
               key={f.q}
-              className="group rounded-xl border border-ink/10 bg-white px-5 py-4"
+              className="group rounded-xl border border-ink/10 bg-white px-5 py-4 transition-colors open:border-brand-blue/30 hover:border-brand-blue/30"
             >
               <summary className="flex cursor-pointer items-center justify-between gap-4 font-semibold text-ink">
                 {f.q}
@@ -543,68 +543,100 @@ function Faq({ faqs }: { faqs: FaqItem[] }) {
 
 function ClosingCta({ wa }: { wa: string }) {
   return (
-    <section className="bg-white py-16 text-center sm:py-20">
-      <div className="mx-auto max-w-2xl px-4 sm:px-6">
-        <h2 className="text-3xl font-extrabold tracking-tight text-ink">
-          Ingat Allah, ingat umroh.
-        </h2>
-        <p className="mt-3 text-ink/60">
-          Konsultasikan rencana keberangkatan Anda — gratis, tanpa komitmen.
-        </p>
-        <div className="mt-8">
-          <WaButton
-            number={wa}
-            message="Assalamu'alaikum, saya ingin konsultasi rencana umroh."
-          >
-            Mulai Konsultasi
-          </WaButton>
-        </div>
+    <section className="relative overflow-hidden bg-brand-blue-deep py-20 text-center text-white sm:py-24">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 size-125 -translate-x-1/2 -translate-y-1/2 opacity-[0.07]"
+      >
+        <KaabaMark />
+      </div>
+      <div className="relative mx-auto max-w-2xl px-4 sm:px-6">
+        <Reveal>
+          <p className="kicker">Mulai Perjalanan</p>
+          <h2 className="mt-4 text-balance text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Ingat Allah, ingat umroh.
+          </h2>
+          <p className="mt-3 text-white/75">
+            Konsultasikan rencana keberangkatan Anda — gratis, tanpa komitmen.
+          </p>
+          <div className="mt-8">
+            <WaButton
+              number={wa}
+              message="Assalamu'alaikum, saya ingin konsultasi rencana umroh."
+            >
+              Mulai Konsultasi
+            </WaButton>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
 }
 
 function Footer({ settings }: { settings: Settings }) {
-  const socials = Object.entries(settings.socials) as [string, string][];
   return (
-    <footer className="bg-ink py-12 text-white/80">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:grid-cols-3 sm:px-6">
+    <footer className="bg-ink text-white">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1.3fr_0.9fr_0.8fr]">
         <div>
-          <p className="text-lg font-extrabold text-white">{site.name}</p>
-          <p className="mt-2 text-sm">
-            Diselenggarakan oleh {settings.legalEntity}, pemegang{" "}
-            {settings.ppiuLicenseNo}
-            {settings.pihkLicenseNo && ` dan ${settings.pihkLicenseNo}`} dari
-            Kementerian Agama RI.
+          <p className="text-xl font-extrabold tracking-tight">{site.name}</p>
+          <p className="mt-3 max-w-md text-sm leading-6 text-white/65">
+            Layanan perjalanan umroh yang dikelola oleh {settings.legalEntity}
+            dengan pendampingan administrasi, manasik, dan keberangkatan yang
+            jelas.
           </p>
+          <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold text-white/80">
+            <span className="rounded-full border border-white/15 px-3 py-1">
+              PPIU {settings.ppiuLicenseNo}
+            </span>
+            <span className="rounded-full border border-white/15 px-3 py-1">
+              PIHK {settings.pihkLicenseNo}
+            </span>
+          </div>
         </div>
-        <div className="text-sm">
-          <p className="font-bold text-white">Kontak</p>
-          {settings.address && <p className="mt-2">{settings.address}</p>}
-          {settings.contactPhone && <p className="mt-1">{settings.contactPhone}</p>}
-          {settings.contactEmail && <p className="mt-1">{settings.contactEmail}</p>}
+
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-wide text-white/45">
+            Kantor
+          </h2>
+          <div className="mt-4 space-y-2 text-sm leading-6 text-white/70">
+            {settings.address && <p>{settings.address}</p>}
+            {settings.contactPhone && <p>{settings.contactPhone}</p>}
+            {settings.contactEmail && <p>{settings.contactEmail}</p>}
+          </div>
         </div>
-        <div className="text-sm">
-          <p className="font-bold text-white">Media Sosial</p>
-          <ul className="mt-2 space-y-1">
-            {socials.map(([name, url]) => (
-              <li key={name}>
-                <a
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="capitalize hover:text-white"
-                >
-                  {name}
-                </a>
-              </li>
-            ))}
-          </ul>
+
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-wide text-white/45">
+            Konsultasi
+          </h2>
+          <p className="mt-4 text-sm leading-6 text-white/65">
+            Butuh jadwal, estimasi biaya, atau pilihan hotel? Tim kami siap
+            bantu lewat WhatsApp.
+          </p>
+          <a
+            href={waLink(
+              settings.whatsappNumber,
+              "Assalamu'alaikum, saya ingin konsultasi rencana umroh.",
+            )}
+            className="mt-5 inline-flex rounded-full bg-brand-gold px-5 py-2.5 text-sm font-bold text-ink transition hover:brightness-105"
+          >
+            Hubungi WhatsApp
+          </a>
         </div>
       </div>
-      <p className="mt-10 text-center text-xs text-white/50">
-        © {new Date().getFullYear()} {site.name}. Hak cipta dilindungi.
-      </p>
+      <div className="border-t border-white/10 py-4">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 text-xs text-white/45 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <p>© {new Date().getFullYear()} {site.name}. Semua hak dilindungi.</p>
+          <div className="flex flex-wrap gap-4">
+            <Link href="/privacy" className="hover:text-white">
+              Kebijakan Privasi
+            </Link>
+            <Link href="/terms" className="hover:text-white">
+              Syarat dan Ketentuan
+            </Link>
+          </div>
+        </div>
+      </div>
     </footer>
   );
 }

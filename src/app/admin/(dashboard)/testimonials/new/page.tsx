@@ -16,7 +16,7 @@ export default async function NewTestimonialPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-extrabold tracking-tight text-ink">
+      <h1 className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">
         Testimoni baru
       </h1>
       <TestimonialForm packageOptions={options} />

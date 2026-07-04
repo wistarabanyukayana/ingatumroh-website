@@ -16,6 +16,7 @@ next-env.d.ts
 
 # AI assistant files — local only, never committed
 .claude/
+.serena/
 CLAUDE.md
 AGENTS.md
 

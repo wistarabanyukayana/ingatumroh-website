@@ -6,7 +6,14 @@ versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-04
+
 ### Added
+
+- README with setup, verification, and deployment notes.
+- Public privacy policy and terms of service pages linked from the footer.
+- Sortable package table headers in the admin package list.
+- React Icons eye-slash marker for admin schedules hidden from public pages.
 
 - Admin CMS (Phase 2) at /admin: Supabase Auth login with middleware
   guard, dashboard, and full CRUD for packages, departures,
@@ -20,6 +27,9 @@ versioning: [SemVer](https://semver.org/).
   column in site settings, shown in the trust bar and footer.
 
 ### Changed
+
+- Refined the public footer layout for clearer legal, contact, and WhatsApp conversion information.
+- Improved admin mobile layout with wrapping navigation, stacked list headers, phone-width action buttons, smaller mobile cards, and responsive headings.
 
 - Real license numbers (SK PPIU 64/2020, SK PIHK 690/2020) replace the
   seed placeholders.

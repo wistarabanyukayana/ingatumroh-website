@@ -18,11 +18,11 @@ export default async function GalleryPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-extrabold tracking-tight text-ink">
+      <h1 className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">
         Galeri Perjalanan
       </h1>
 
-      <div className="rounded-2xl border border-ink/10 bg-white p-6">
+      <div className="rounded-2xl border border-ink/10 bg-white p-4 sm:p-6">
         <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-ink/50">
           Tambah foto
         </h2>

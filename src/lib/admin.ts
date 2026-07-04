@@ -23,10 +23,38 @@ export async function requireUser() {
 
 export function fieldErrorsFrom(error: z.ZodError): ActionState {
   const flat = z.flattenError(error);
+  const fieldErrors: Record<string, string[]> = {};
+  const formErrors: string[] = [];
+
+  for (const issue of error.issues) {
+    const key = issue.path.join(".");
+
+    if (!key) {
+      formErrors.push(issue.message);
+      continue;
+    }
+
+    fieldErrors[key] ??= [];
+    fieldErrors[key].push(issue.message);
+  }
+
+  const firstIssue = error.issues[0];
+  const firstPath = firstIssue?.path.join(".");
+  const firstMessage = firstIssue
+    ? [firstPath, firstIssue.message].filter(Boolean).join(": ")
+    : null;
+
   return {
     ok: false,
-    message: "Periksa kembali isian yang ditandai.",
-    fieldErrors: flat.fieldErrors as Record<string, string[]>,
+    message: firstMessage
+      ? `Periksa kembali isian: ${firstMessage}`
+      : formErrors[0]
+        ? `Periksa kembali isian: ${formErrors[0]}`
+      : "Periksa kembali isian yang ditandai.",
+    fieldErrors: {
+      ...(flat.fieldErrors as Record<string, string[]>),
+      ...fieldErrors,
+    },
   };
 }
 

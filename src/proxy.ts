@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 // Guards /admin only (see matcher) — public pages stay static and are
 // never touched by this middleware. Also refreshes the auth session
 // cookie on every admin request, as @supabase/ssr requires.
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(

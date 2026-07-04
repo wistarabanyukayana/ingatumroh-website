@@ -82,6 +82,10 @@ const siteSettingsRefinements = {
   partnerLogos: z.array(partnerLogoSchema),
   socials: socialsSchema,
 };
+const siteSettingsUpdateRefinements = {
+  ...siteSettingsRefinements,
+  partnerLogos: z.array(partnerLogoSchema).optional(),
+};
 
 export const siteSettingsSelectSchema = createSelectSchema(
   siteSettings,
@@ -90,7 +94,7 @@ export const siteSettingsSelectSchema = createSelectSchema(
 // Settings row is a singleton — only updates, never inserts from the admin.
 export const siteSettingsUpdateSchema = createUpdateSchema(
   siteSettings,
-  siteSettingsRefinements,
+  siteSettingsUpdateRefinements,
 );
 
 export const leadInsertSchema = createInsertSchema(leads, {

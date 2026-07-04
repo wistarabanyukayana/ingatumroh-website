@@ -17,13 +17,13 @@ export default async function TestimonialsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-extrabold tracking-tight text-ink">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">
           Testimoni
         </h1>
         <Link
           href="/admin/testimonials/new"
-          className="rounded-full bg-brand-blue px-5 py-2 text-sm font-semibold text-white hover:brightness-110"
+          className="w-full rounded-full bg-brand-blue px-5 py-2 text-center text-sm font-semibold text-white hover:brightness-110 sm:w-auto"
         >
           + Testimoni baru
         </Link>

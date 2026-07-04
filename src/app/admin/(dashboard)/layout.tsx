@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { logout } from "@/actions/auth";
+import { AdminNavLink } from "@/components/admin/AdminNavLink";
 import { KaabaMark } from "@/components/KaabaMark";
 import { site } from "@/config/site";
 
@@ -23,8 +24,8 @@ const nav = [
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-surface">
-      <header className="border-b border-ink/10 bg-white">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+      <header className="sticky top-0 z-30 border-b border-ink/10 bg-white/90 backdrop-blur">
+        <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:flex-nowrap sm:px-6 lg:px-8">
           <Link href="/admin" className="flex items-center gap-2">
             <span className="size-7">
               <KaabaMark />
@@ -36,15 +37,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               Admin
             </span>
           </Link>
-          <nav className="flex items-center gap-1 overflow-x-auto text-sm font-medium text-ink/70">
+          <nav className="order-3 -mx-4 flex w-[calc(100%+2rem)] items-center gap-1 overflow-x-auto px-4 text-sm font-medium text-ink/70 sm:order-none sm:mx-0 sm:w-auto sm:px-0">
             {nav.map(([label, href]) => (
-              <Link
-                key={href}
-                href={href}
-                className="whitespace-nowrap rounded-full px-3 py-1.5 hover:bg-brand-blue/5 hover:text-brand-blue"
-              >
+              <AdminNavLink key={href} href={href}>
                 {label}
-              </Link>
+              </AdminNavLink>
             ))}
             <form action={logout}>
               <button
@@ -57,8 +54,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </nav>
         </div>
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">{children}</main>
-      <footer className="mx-auto max-w-6xl px-4 pb-8 text-xs text-ink/40 sm:px-6">
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {children}
+      </main>
+      <footer className="mx-auto max-w-7xl px-4 pb-8 text-xs text-ink/40 sm:px-6 lg:px-8">
         Perubahan tersimpan langsung memperbarui halaman publik.{" "}
         <a href="/" target="_blank" className="font-semibold text-brand-blue">
           Lihat website →

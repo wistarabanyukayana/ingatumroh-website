@@ -6,6 +6,7 @@ import { saveTestimonial } from "@/actions/testimonials";
 import { ImageField } from "@/components/admin/ImageField";
 import {
   Field,
+  FormCard,
   inputClass,
   StatusMessage,
   SubmitButton,
@@ -24,11 +25,11 @@ export function TestimonialForm({
 
   return (
     <form action={action} className="max-w-xl space-y-6">
-      <StatusMessage state={state} />
       {testimonial && (
         <input type="hidden" name="id" value={testimonial.id} />
       )}
 
+      <FormCard title="Isi testimoni">
       <Field label="Nama jamaah" name="name" errors={err?.name}>
         <input
           id="name"
@@ -57,7 +58,9 @@ export function TestimonialForm({
         maxWidth={400}
         defaultUrl={testimonial?.photoUrl}
       />
+      </FormCard>
 
+      <FormCard title="Publikasi">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field
           label="Paket terkait (opsional)"
@@ -98,7 +101,9 @@ export function TestimonialForm({
         />
         Tayangkan di website
       </label>
+      </FormCard>
 
+      <StatusMessage state={state} />
       <SubmitButton>
         {testimonial ? "Simpan perubahan" : "Buat testimoni"}
       </SubmitButton>

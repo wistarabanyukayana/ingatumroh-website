@@ -8,6 +8,7 @@ import {
   siteSettings,
   testimonials,
 } from "@/db/schema";
+import { jakartaTodayDate } from "@/lib/date";
 
 // Read model for the public landing page. Runs at build/revalidate time
 // only (the page is force-static) — never on a visitor request.
@@ -38,7 +39,7 @@ export async function getLandingData() {
               pkgs.map((p) => p.id),
             ),
             inArray(departures.status, ["open", "almost_full"]),
-            gte(departures.departDate, new Date()),
+            gte(departures.departDate, jakartaTodayDate()),
           ),
         )
         .orderBy(asc(departures.departDate))

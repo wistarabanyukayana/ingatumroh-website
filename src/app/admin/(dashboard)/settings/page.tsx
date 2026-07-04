@@ -26,7 +26,7 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-ink">
+        <h1 className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">
           Pengaturan Website
         </h1>
         <p className="mt-1 text-sm text-ink/60">

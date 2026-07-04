@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { getDb } from "@/db";
-import { departures } from "@/db/schema";
+import { departures, packages } from "@/db/schema";
 import {
   fieldErrorsFrom,
   num,
@@ -15,6 +15,12 @@ import {
   str,
   type ActionState,
 } from "@/lib/admin";
+import {
+  inclusiveCalendarDays,
+  isoDate,
+  jakartaTodayIso,
+  parseAdminDate,
+} from "@/lib/date";
 import { departureInsertSchema } from "@/lib/schemas";
 
 export async function saveDeparture(
@@ -24,10 +30,25 @@ export async function saveDeparture(
   await requireUser();
 
   const id = numOrNull(formData, "id");
+  const departDate = parseAdminDate(str(formData, "departDate"));
+  const returnDate = parseAdminDate(str(formData, "returnDate"));
+
+  if (!departDate || !returnDate) {
+    const fieldErrors: Record<string, string[]> = {};
+    if (!departDate) fieldErrors.departDate = ["Gunakan format DD/MM/YYYY."];
+    if (!returnDate) fieldErrors.returnDate = ["Gunakan format DD/MM/YYYY."];
+
+    return {
+      ok: false,
+      message: "Periksa kembali tanggal keberangkatan.",
+      fieldErrors,
+    };
+  }
+
   const input = {
     packageId: num(formData, "packageId"),
-    departDate: new Date(str(formData, "departDate")),
-    returnDate: new Date(str(formData, "returnDate")),
+    departDate,
+    returnDate,
     quota: num(formData, "quota"),
     status: str(formData, "status"),
   };
@@ -43,6 +64,56 @@ export async function saveDeparture(
   }
 
   const db = getDb();
+  if (id === null && isoDate(parsed.data.departDate) < jakartaTodayIso()) {
+    return {
+      ok: false,
+      message: "Tanggal berangkat tidak boleh sebelum hari ini.",
+      fieldErrors: { departDate: ["Jadwal lampau tidak tampil di halaman publik."] },
+    };
+  }
+
+  if (
+    parsed.data.status === "departed" &&
+    isoDate(parsed.data.departDate) > jakartaTodayIso()
+  ) {
+    return {
+      ok: false,
+      message: "Status sudah berangkat hanya untuk jadwal hari ini atau lampau.",
+      fieldErrors: {
+        status: ["Jika berangkat lebih awal, ubah tanggal berangkat dan pulang dulu."],
+      },
+    };
+  }
+
+  const [pkg] = await db
+    .select({ durationDays: packages.durationDays })
+    .from(packages)
+    .where(eq(packages.id, parsed.data.packageId))
+    .limit(1);
+
+  if (!pkg) {
+    return {
+      ok: false,
+      message: "Paket tidak ditemukan.",
+      fieldErrors: { packageId: ["Pilih paket yang tersedia."] },
+    };
+  }
+
+  const scheduledDays = inclusiveCalendarDays(
+    parsed.data.departDate,
+    parsed.data.returnDate,
+  );
+
+  if (scheduledDays < pkg.durationDays) {
+    return {
+      ok: false,
+      message: `Durasi jadwal minimal ${pkg.durationDays} hari sesuai paket.`,
+      fieldErrors: {
+        returnDate: [`Tanggal pulang minimal ${pkg.durationDays} hari dari berangkat.`],
+      },
+    };
+  }
+
   if (id === null) {
     await db.insert(departures).values(parsed.data);
   } else {

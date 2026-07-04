@@ -5,28 +5,31 @@ import { useActionState } from "react";
 import { saveDeparture } from "@/actions/departures";
 import {
   Field,
+  FormCard,
   inputClass,
   StatusMessage,
   SubmitButton,
 } from "@/components/admin/ui";
+import { isoDate, isoToDisplayDate } from "@/lib/date";
 import type { Departure } from "@/lib/schemas";
 
-const toDateInput = (d: Date) => d.toISOString().slice(0, 10);
+const toDisplayDate = (d: Date) => isoToDisplayDate(isoDate(d));
 
 export function DepartureForm({
   departure,
   packageOptions,
 }: {
   departure?: Departure;
-  packageOptions: { id: number; name: string }[];
+  packageOptions: { id: number; name: string; durationDays: number }[];
 }) {
   const [state, action] = useActionState(saveDeparture, null);
   const err = state?.fieldErrors;
 
   return (
     <form action={action} className="max-w-xl space-y-6">
-      <StatusMessage state={state} />
       {departure && <input type="hidden" name="id" value={departure.id} />}
+
+      <FormCard title="Detail jadwal">
 
       <Field label="Paket" name="packageId" errors={err?.packageId}>
         <select
@@ -38,7 +41,7 @@ export function DepartureForm({
         >
           {packageOptions.map((p) => (
             <option key={p.id} value={p.id}>
-              {p.name}
+              {p.name} — {p.durationDays} hari
             </option>
           ))}
         </select>
@@ -49,13 +52,17 @@ export function DepartureForm({
           label="Tanggal berangkat"
           name="departDate"
           errors={err?.departDate}
+          hint="Format DD/MM/YYYY. Jadwal lampau tidak tampil di halaman publik."
         >
           <input
             id="departDate"
             name="departDate"
-            type="date"
+            type="text"
+            inputMode="numeric"
+            placeholder="DD/MM/YYYY"
+            pattern="[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}"
             required
-            defaultValue={departure && toDateInput(departure.departDate)}
+            defaultValue={departure && toDisplayDate(departure.departDate)}
             className={inputClass}
           />
         </Field>
@@ -63,13 +70,17 @@ export function DepartureForm({
           label="Tanggal pulang"
           name="returnDate"
           errors={err?.returnDate}
+          hint="Harus sesuai atau lebih lama dari durasi paket."
         >
           <input
             id="returnDate"
             name="returnDate"
-            type="date"
+            type="text"
+            inputMode="numeric"
+            placeholder="DD/MM/YYYY"
+            pattern="[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}"
             required
-            defaultValue={departure && toDateInput(departure.returnDate)}
+            defaultValue={departure && toDisplayDate(departure.returnDate)}
             className={inputClass}
           />
         </Field>
@@ -87,7 +98,12 @@ export function DepartureForm({
             className={inputClass}
           />
         </Field>
-        <Field label="Status" name="status" errors={err?.status}>
+        <Field
+          label="Status"
+          name="status"
+          errors={err?.status}
+          hint="Status publik hanya menampilkan Tersedia dan Hampir penuh untuk jadwal hari ini atau mendatang."
+        >
           <select
             id="status"
             name="status"
@@ -102,6 +118,10 @@ export function DepartureForm({
           </select>
         </Field>
       </div>
+
+      </FormCard>
+
+      <StatusMessage state={state} />
 
       <SubmitButton>
         {departure ? "Simpan perubahan" : "Buat jadwal"}

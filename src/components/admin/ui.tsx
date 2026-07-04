@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 
 // Small form kit shared by all admin forms — one visual language.
@@ -70,9 +71,19 @@ export function StatusMessage({
 }: {
   state: { ok: boolean; message: string } | null;
 }) {
+  const ref = useRef<HTMLParagraphElement>(null);
+
+  // Long forms submit from the bottom — make sure feedback is on screen.
+  useEffect(() => {
+    if (state?.message) {
+      ref.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }, [state]);
+
   if (!state?.message) return null;
   return (
     <p
+      ref={ref}
       className={`rounded-lg px-4 py-2.5 text-sm font-medium ${
         state.ok
           ? "bg-brand-emerald/10 text-brand-emerald"
@@ -81,6 +92,25 @@ export function StatusMessage({
     >
       {state.message}
     </p>
+  );
+}
+
+// Titled white card grouping related fields — the section unit every
+// admin form is built from (same look as the settings page cards).
+export function FormCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-2xl border border-ink/10 bg-white p-4 sm:p-6">
+      <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-ink/50">
+        {title}
+      </h2>
+      <div className="space-y-4">{children}</div>
+    </section>
   );
 }
 

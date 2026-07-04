@@ -30,7 +30,7 @@ export default async function EditTestimonialPage({
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-extrabold tracking-tight text-ink">
+      <h1 className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">
         Edit testimoni
       </h1>
       <TestimonialForm testimonial={testimonial} packageOptions={options} />

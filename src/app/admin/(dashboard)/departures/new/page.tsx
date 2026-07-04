@@ -10,13 +10,17 @@ export const metadata = { title: "Jadwal baru" };
 
 export default async function NewDeparturePage() {
   const options = await getDb()
-    .select({ id: packages.id, name: packages.name })
+    .select({
+      id: packages.id,
+      name: packages.name,
+      durationDays: packages.durationDays,
+    })
     .from(packages)
     .orderBy(asc(packages.sortOrder));
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-extrabold tracking-tight text-ink">
+      <h1 className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">
         Jadwal baru
       </h1>
       {options.length === 0 ? (

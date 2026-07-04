@@ -6,6 +6,7 @@ import { savePackage } from "@/actions/packages";
 import { ImageField } from "@/components/admin/ImageField";
 import {
   Field,
+  FormCard,
   inputClass,
   StatusMessage,
   SubmitButton,
@@ -18,9 +19,9 @@ export function PackageForm({ pkg }: { pkg?: Package }) {
 
   return (
     <form action={action} className="max-w-3xl space-y-6">
-      <StatusMessage state={state} />
       {pkg && <input type="hidden" name="id" value={pkg.id} />}
 
+      <FormCard title="Informasi paket">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Nama paket" name="name" errors={err?.name}>
           <input
@@ -64,6 +65,9 @@ export function PackageForm({ pkg }: { pkg?: Package }) {
         defaultUrl={pkg?.heroImageUrl}
       />
 
+      </FormCard>
+
+      <FormCard title="Harga & durasi">
       <div className="grid gap-4 sm:grid-cols-3">
         <Field
           label="Harga mulai (Rp)"
@@ -105,6 +109,9 @@ export function PackageForm({ pkg }: { pkg?: Package }) {
         </Field>
       </div>
 
+      </FormCard>
+
+      <FormCard title="Hotel">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Hotel Makkah" name="hotelMakkah" errors={err?.hotelMakkah}>
           <input
@@ -158,6 +165,9 @@ export function PackageForm({ pkg }: { pkg?: Package }) {
         </Field>
       </div>
 
+      </FormCard>
+
+      <FormCard title="Fasilitas & itinerari">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field
           label="Termasuk"
@@ -206,6 +216,9 @@ export function PackageForm({ pkg }: { pkg?: Package }) {
         />
       </Field>
 
+      </FormCard>
+
+      <FormCard title="Publikasi">
       <div className="grid gap-4 sm:grid-cols-3">
         <Field
           label="Urutan tampil"
@@ -240,6 +253,10 @@ export function PackageForm({ pkg }: { pkg?: Package }) {
           Tayangkan di website
         </label>
       </div>
+
+      </FormCard>
+
+      <StatusMessage state={state} />
 
       <SubmitButton>{pkg ? "Simpan perubahan" : "Buat paket"}</SubmitButton>
     </form>

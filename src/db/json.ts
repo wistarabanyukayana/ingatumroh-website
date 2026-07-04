@@ -17,10 +17,14 @@ export const partnerLogoSchema = z.object({
 });
 export type PartnerLogo = z.infer<typeof partnerLogoSchema>;
 
+const socialUrlSchema = z.url({
+  error: "Gunakan URL lengkap, contoh https://instagram.com/akun.",
+});
+
 export const socialsSchema = z.object({
-  instagram: z.url().optional(),
-  facebook: z.url().optional(),
-  tiktok: z.url().optional(),
-  youtube: z.url().optional(),
+  instagram: socialUrlSchema.optional(),
+  facebook: socialUrlSchema.optional(),
+  tiktok: socialUrlSchema.optional(),
+  youtube: socialUrlSchema.optional(),
 });
 export type Socials = z.infer<typeof socialsSchema>;
